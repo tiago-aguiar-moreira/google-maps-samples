@@ -1,0 +1,66 @@
+<!-- Exemplo de marcadores -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-zGoQrElM_d8M1g6OYeLOvBpceuUaMDY" >
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(-23.5489,-46.6388), // Latitude/Longitudade do ponto Inicial = SP
+          zoom: 8, //Quanto menor o número, menor o zoom
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+        var picos = [
+            {
+                "Local": "Pico do Jaraguá",
+                "Latitude": -23.457466,
+                "Longitude": -46.765493
+            },
+            {
+                "Local": "Pico do Itaguaré",
+                "Latitude": -22.486534,
+                "Longitude": -45.085229
+            },
+            
+            {
+                "Local": "Pedra da Onça",
+                "Latitude": -22.855016,
+                "Longitude": -46.003439
+            },
+            {
+                "Local": "Pico dos Marins",
+                "Latitude": -22.501191,
+                "Longitude": -45.121068
+            },
+            {
+                "Local": "Pico do Corcovado",
+                "Latitude": -23.449097,
+                "Longitude": -45.192851
+            }
+        ];
+
+        picos.forEach(function(pico, index) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(pico.Latitude,pico.Longitude),//seta posição
+                map: map,//Objeto mapa
+                title:pico.Local//string que será exibida quando passar o mouse no marker
+                //icon: caminho_da_imagem
+            });
+        });
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas" style="width:100%; height:100%"></div>
+  </body>
+</html> 
