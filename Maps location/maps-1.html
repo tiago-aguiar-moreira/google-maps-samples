@@ -1,0 +1,112 @@
+<!-- Exemplo de marcadores -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+
+      input[type=text] {
+        width: 50%;
+        margin: 10px 5px;
+        box-sizing: border-box;
+      }
+
+      input[type=button] {
+        width: 25%;
+        height: 40px;
+        margin: 10px 5px;
+        box-sizing: border-box;
+      }
+      
+      .maps-content {
+        display: table;
+        width: 100%;
+        margin: 30px 0;
+        height: 370px
+      }
+
+      #left-panel { 
+        width: 42%;
+		    height: 100%;
+		    float: left
+      }
+
+      #map-panel { 
+		    height: 100%;
+		    width: 50%;
+      }
+
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-zGoQrElM_d8M1g6OYeLOvBpceuUaMDY" >
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+
+        // var mapOptions = {
+        //   center: new google.maps.LatLng(-23.5489,-46.6388), // Latitude/Longitudade do ponto Inicial = SP
+        //   zoom: 15, //Quanto menor o número, menor o zoom
+        //   mapTypeId: google.maps.MapTypeId.ROADMAP
+        // };
+        
+        // var map = new google.maps.Map(document.getElementById("map-panel"), mapOptions);
+      }
+
+      function calculateAndDisplayRoute(map, panel, origin, destination) {
+        let directionsServiceOptions = {
+          origin: { query: origin },
+          destination: { query: destination },
+          travelMode: 'TRANSIT'
+        };
+
+        let directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+        let directionsService = new google.maps.DirectionsService;
+
+        directionsService.route(directionsServiceOptions, function (response, status) {
+          if (status === 'OK') {
+            directionsRenderer.setDirections(response);
+            directionsRenderer.setPanel(panel);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      }
+
+      function search() {
+        let origin = document.getElementById("origin").value;
+        let destination = document.getElementById("destination").value;
+        
+        if((origin != null) && (destination != null)) {
+          
+        var mapOptions = {
+          //center: new google.maps.LatLng(-23.5489,-46.6388), // Latitude/Longitudade do ponto Inicial = SP
+          zoom: 15, //Quanto menor o número, menor o zoom
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+          var map = new google.maps.Map(document.getElementById('map-panel'), mapOptions);
+          var panel = document.getElementById('left-panel');
+
+          calculateAndDisplayRoute(map, panel, origin, destination);
+        }
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div>
+      <label for="origem">Origem:</label><br>
+      <input type="text" id="origin" value="Rua jairo de almeida machado, 60"/><br>
+
+      <label for="destino">Destino:</label><br>
+      <input type="text" id="destination" value="Rua henri dunant, 873"/><br>
+
+      <input type="button" id="search" onclick="search()" value="Buscar"/>
+    </div>
+    
+    <div class="maps-content">
+      <div id="left-panel"></div>
+      <div id="map-panel"></div>
+    </div>
+  </body>
+</html> 
