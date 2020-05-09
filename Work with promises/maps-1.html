@@ -46,7 +46,7 @@
       function searchAddress(address, direction) {
         return new Promise((resolve, reject) => {
 
-          var geocoder = new google.maps.Geocoder().geocode({ 'address': address }, (result, status) => {
+          var geocoder = new google.maps.Geocoder().geocode({ address: address }, (result, status) => {
             let address = null;
 
             if (status === 'OK') {
