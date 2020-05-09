@@ -1,0 +1,170 @@
+<!-- Exemplo de marcadores -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+
+      input[type=text] {
+        width: 50%;
+        margin: 10px 5px;
+        box-sizing: border-box;
+      }
+
+      input[type=button] {
+        width: 25%;
+        height: 40px;
+        margin: 10px 5px;
+        box-sizing: border-box;
+      }
+      
+      .maps-content {
+        display: table;
+        width: 100%;
+        margin: 30px 0;
+        height: 370px
+      }
+
+      #left-panel { 
+        width: 42%;
+		    height: 100%;
+		    float: left
+      }
+
+      #map-panel { 
+		    height: 100%;
+		    width: 50%;
+      }
+
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=XPTO" >
+    </script>
+    <script type="text/javascript">
+
+      function searchAddress(address, direction) {
+        return new Promise((resolve, reject) => {
+
+          var geocoder = new google.maps.Geocoder().geocode({ 'address': address }, (result, status) => {
+            let address = null;
+
+            if (status === 'OK') {
+
+              address = result.map((item) => {
+                return {
+                  address: item.formatted_address,
+                  location: {
+                    lat: item.geometry.location.lat(),
+                    lng: item.geometry.location.lng()
+                  }
+                }
+              });
+
+              resolve({
+                direction: direction,
+                address: address,
+                info: {
+                  success: true,
+                  status: status
+                }
+              });
+            } else {
+              reject({
+                direction: direction,
+                address: address,
+                info: {
+                  success: false,
+                  status: status
+                }
+              });
+            }
+          });
+        });
+      }
+
+      function calculateAndDisplayRoute(map, panel, origin, destination, callback) {
+        let directionsServiceOptions = {
+          origin: origin,
+          destination: destination,
+          travelMode: 'TRANSIT'
+        };
+
+        new google.maps.DirectionsService().route(directionsServiceOptions, function (response, status) {
+          let directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+
+          if (status === 'OK') {
+            directionsRenderer.setDirections(response);
+
+            if(panel !== null) {
+              directionsRenderer.setPanel(panel);
+            }
+          }
+
+          callback(status === 'OK');
+        });
+      }
+
+      function search() {
+        let origin = document.getElementById("origin").value;
+        let destination = document.getElementById("destination").value;
+
+        if((origin != null) && (destination != null)) {
+
+          let searchOriginAndDestination = [
+            searchAddress(origin, 'ORIGIN'),
+            searchAddress(destination, 'DESTINATION')
+          ];
+
+          let addressOrigin = null;
+          let addressDestination = null;
+
+          Promise.all(searchOriginAndDestination).then(x => {
+            addressOrigin = x.find(x => x.direction == 'ORIGIN');
+            addressDestination = x.find(x => x.direction == 'DESTINATION');
+
+            var mapOptions = {
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById('map-panel'), mapOptions);
+            var panel = document.getElementById('left-panel');
+
+            calculateAndDisplayRoute(
+              map,
+              panel,
+              addressOrigin.address[0].location,
+              addressDestination.address[0].location,
+              (success) => {
+                if(success)
+                {
+                  console.log('Success');
+                } else {
+                  console.log('Fail');
+                }
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <label for="origem">Origem:</label><br>
+      <input type="text" id="origin" value="Rua jairo de almeida machado, 15"/><br>
+
+      <label for="destino">Destino:</label><br>
+      <input type="text" id="destination" value="Rua henri dunant, 873"/><br>
+
+      <input type="button" id="search" onclick="search()" value="Buscar"/>
+    </div>
+    
+    <div class="maps-content">
+      <div id="left-panel"></div>
+      <div id="map-panel"></div>
+    </div>
+  </body>
+</html> 
