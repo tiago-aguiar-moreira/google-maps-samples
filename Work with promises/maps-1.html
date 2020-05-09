@@ -123,12 +123,12 @@
             addressOrigin = x.find(x => x.direction == 'ORIGIN');
             addressDestination = x.find(x => x.direction == 'DESTINATION');
 
-            var mapOptions = {
+            let mapOptions = {
               mapTypeId: google.maps.MapTypeId.ROADMAP
             };
 
-            var map = new google.maps.Map(document.getElementById('map-panel'), mapOptions);
-            var panel = document.getElementById('left-panel');
+            let map = new google.maps.Map(document.getElementById('map-panel'), mapOptions);
+            let panel = document.getElementById('left-panel');
 
             calculateAndDisplayRoute(
               map,
